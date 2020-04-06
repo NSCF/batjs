@@ -1,4 +1,5 @@
 node_modules
+stash.js
 
 .vscode/*
 !.vscode/settings.json
