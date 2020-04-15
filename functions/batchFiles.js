@@ -55,13 +55,22 @@ module.exports = async function(sourcePath, destPath, batchSize, targetFileTypes
       if (fileBarcode.includes('-')) {//-1, -2, etc
         base = fileBarcode.slice(0, fileBarcode.lastIndexOf('-'))
       }
+	  else if (fileBarcode.includes('(')) {//-1, -2, etc
+		base = fileBarcode.slice(0, fileBarcode.lastIndexOf('(')).trim()
+	  }
       else if (/[A-Z]/.test(fileBarcode[fileBarcode.length - 1])){ //A, B, etc
         //get the index of the last number before the letters
         let lastnumIndex = fileBarcode.length -1
-        while(isNaN(fileBarcode[lastnumIndex])){
+        while(isNaN(fileBarcode[lastnumIndex]) && lastnumIndex >= 0){
           --lastnumIndex
         }
-        base = fileBarcode.substring(0, lastnumIndex + 1)
+		if(lastnumIndex < 0) {
+			continue //its a full text barcode, with no numbers
+		}
+		else {
+			base = fileBarcode.substring(0, lastnumIndex + 1)
+		}
+        
       }
       else {
         base = fileBarcode
