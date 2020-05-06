@@ -41,6 +41,7 @@ program
     .option('-i|--include-subdirs', 'include all subdirectories and their subdirectories in finding files to extract')
     .option('-e|--end-dir', 'filter files only with immediate parent directories with this name')
     .option('-a|--any-dir', 'filter files with this directory name anywhere in their file path')
+    .option('-fn|--file-names', 'a txt file with file names to filter on - only returns files listed in this file, excluding extensions')
     .option('-t|--type <fileTypes>', 'file type extensions to include in the extraction')
     .option('-m|--move', 'move the files instead of copying them')
     .action(options => {

@@ -3,6 +3,8 @@ const copyFile = require('cp-file')
 const fs = require('fs-extra');
 const path = require('path');
 
+const makeDictionary = require('./makeDictionary.js')
+
 module.exports = async function(sourcePath, destPath, batchSize, targetFileTypes, exclude, byOccurrence, copy){
 
   var sourcePath = path.resolve(process.cwd(), sourcePath)
@@ -48,41 +50,8 @@ module.exports = async function(sourcePath, destPath, batchSize, targetFileTypes
 
   if(byOccurrence){
     //make a dictionary of occurrences
-    let occurrenceGroups = {}
-    targetFiles.forEach(targetFile => {
-      let fileBarcode = targetFile.replace(path.extname(targetFile), "")
-      let base = ''
-      if (fileBarcode.includes('-')) {//-1, -2, etc
-        base = fileBarcode.slice(0, fileBarcode.lastIndexOf('-'))
-      }
-	  else if (fileBarcode.includes('(')) {//-1, -2, etc
-		base = fileBarcode.slice(0, fileBarcode.lastIndexOf('(')).trim()
-	  }
-      else if (/[A-Z]/.test(fileBarcode[fileBarcode.length - 1])){ //A, B, etc
-        //get the index of the last number before the letters
-        let lastnumIndex = fileBarcode.length -1
-        while(isNaN(fileBarcode[lastnumIndex]) && lastnumIndex >= 0){
-          --lastnumIndex
-        }
-		if(lastnumIndex < 0) {
-			continue //its a full text barcode, with no numbers
-		}
-		else {
-			base = fileBarcode.substring(0, lastnumIndex + 1)
-		}
-        
-      }
-      else {
-        base = fileBarcode
-      }
-
-      if(occurrenceGroups[base]){
-        occurrenceGroups[base].push(targetFile)
-      }
-      else {
-        occurrenceGroups[base] = [targetFile]
-      }
-    })
+    let barcodesArray = targetFiles.map(targetFile => targetFile.replace(path.extname(targetFile), ""))
+    let occurrenceGroups = makeDictionary(barcodesArray)
 
     let keys = Object.keys(occurrenceGroups)
     
@@ -94,7 +63,14 @@ module.exports = async function(sourcePath, destPath, batchSize, targetFileTypes
       
       let thisChunkKeys = keys.slice(firstKeyInd, lastKeyInd)
       let thisChunkFiles = []
-      thisChunkKeys.forEach(key => thisChunkFiles = [...thisChunkFiles, ...occurrenceGroups[key]])
+      let keyBarcodes, tf
+      thisChunkKeys.forEach(key => {
+        keyBarcodes = occurrenceGroups[key]
+        for (const keyBarcode of keyBarcodes){
+          tf = targetFiles.find(t => t.replace(/\.[^/.]+$/, "") == keyBarcode)
+          thisChunkFiles.push(tf)
+        }
+      })
 
       for (var fileName of thisChunkFiles) {
         var oldPath = path.join(sourcePath, fileName)
@@ -173,7 +149,6 @@ module.exports = async function(sourcePath, destPath, batchSize, targetFileTypes
     return
   }
 
-  console.log('file batches complete')
   return
 
 }

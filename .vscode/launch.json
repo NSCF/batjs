@@ -11,8 +11,9 @@
       "program": "${workspaceFolder}\\index.js",
       "args": [
           "batch",
-          "-s H:\\Herbarium Specimen Images\\Wits Moss\\test",
-          "-n 3"
+          "-s H:\\Herbarium Specimen Images\\SANBI Compton\\zip\\NSCF Batch 1-3\\NBG-heritage-btch-2-02-006",
+          "-n 60",
+          "--by-occurrence"
       ],
       "console": "externalTerminal"
     },

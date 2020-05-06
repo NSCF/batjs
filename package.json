@@ -16,8 +16,8 @@
     "co": "^4.6.0",
     "co-prompt": "^1.0.0",
     "commander": "^5.0.0",
-    "cp-file": "^9.0.0",
-    "fs-extra": "^9.0.0",
+    "cp-file": "^7.0.0",
+    "fs-extra": "^8.1.0",
     "move-file": "^1.2.0",
     "node-dir": "^0.1.17"
   }

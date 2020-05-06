@@ -16,7 +16,7 @@ const path = require('path')
  * endDir is for filtering on the name of the immediate parent directory of files
  * anydir is for filtering on any parent directory of files
  */
-module.exports = async function(sourcePath, destPath, moveFiles, recursive, targetFileTypes, endDir, anyDir){
+module.exports = async function(sourcePath, destPath, moveFiles, recursive, targetFileTypes, endDir, anyDir, filterFiles){
 
   var sourcePath = path.resolve(process.cwd(), sourcePath)
 
@@ -91,6 +91,17 @@ module.exports = async function(sourcePath, destPath, moveFiles, recursive, targ
       endPart = filePath.split(/[\\\/]/).pop().toUpperCase()
       return endPart == endDir.toUpperCase()
     })
+  }
+
+  if(filterFiles) {
+    if(fs.lstatSync(filterFiles).isFile() && path.extname(filterFiles).toLowerCase() == '.txt') {  //must be a txt file
+      let filesString = await fs.readFile(filterFiles)
+      let filterFileNames = filesString.split(/\s*[,;|]\s*/).filter(x => x).map(x => x.toUpperCase())
+      targetFilePaths = targetFilePaths.filter(filePath => {
+        let fname = path.basename(filePath).replace(path.extname(filePath), "").toUpperCase()
+        return filterFileNames.includes(fname)
+      })
+    } 
   }
 
   if (targetFilePaths.length == 0) {

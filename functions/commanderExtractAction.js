@@ -1,6 +1,7 @@
 const co = require('co')
 const prompt = require('co-prompt')
 const fs = require('fs-extra')
+const path = require('path')
 
 const extract = require('./extractFiles.js')
 
@@ -58,6 +59,10 @@ module.exports = function(options){
   if(options.anyDir){
     promptMsg += `and with any directory in their file path called \'${options.anyDir}\'' `
   }
+
+  if (options.fileNames){
+    promptMsg += `and listed in '${path.basename(options.fileNames)}' `
+  }
   
   promptMsg += `to  ${options.dest} `
 
@@ -68,8 +73,8 @@ module.exports = function(options){
     return proceed
   }).then(async proceed => {
     if (proceed) {
-      try{
-        await extract(options.source, options.dest, options.move, options.includeSubdirs, options.fileTypes, options.endDir, options.anyDir)
+      try {
+        await extract(options.source, options.dest, options.move, options.includeSubdirs, options.fileTypes, options.endDir, options.anyDir, options.fileNames)
       }
       catch(err) {
         console.log('error extracting files: ', err.message)
