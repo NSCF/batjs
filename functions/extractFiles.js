@@ -62,6 +62,11 @@ module.exports = async function(sourcePath, destPath, moveFiles, recursive, targ
   
   targetFilePaths = targetFilePaths.filter(item => path.extname(item)) //shouldn't be necessary but just in case...
 
+  if (targetFilePaths.length == 0) {
+    console.log('no files match the criteria to transfer')
+    return
+  }
+
   targetFileTypes = targetFileTypes.map(type => {
     if(type[0] != '.') {
       return '.' + type
@@ -71,11 +76,21 @@ module.exports = async function(sourcePath, destPath, moveFiles, recursive, targ
     }
   })
 
+  if (targetFilePaths.length == 0) {
+    console.log('no files match the criteria to transfer')
+    return
+  }
+
   let targetFileTypesUpper = targetFileTypes.map(x => x.toUpperCase())
   targetFilePaths = targetFilePaths.filter(item => {
     let itemExtUpper = path.extname(item).toUpperCase()
     return targetFileTypesUpper.includes(itemExtUpper)
   })
+
+  if (targetFilePaths.length == 0) {
+    console.log('no files match the criteria to transfer')
+    return
+  }
 
   if (anyDir){
     let parts
@@ -85,12 +100,22 @@ module.exports = async function(sourcePath, destPath, moveFiles, recursive, targ
     })
   }
 
+  if (targetFilePaths.length == 0) {
+    console.log('no files match the criteria to transfer')
+    return
+  }
+
   if(endDir) {
     let endPart
     targetFilePaths = targetFilePaths.filter(filePath => {
       endPart = filePath.split(/[\\\/]/).pop().toUpperCase()
       return endPart == endDir.toUpperCase()
     })
+  }
+
+  if (targetFilePaths.length == 0) {
+    console.log('no files match the criteria to transfer')
+    return
   }
 
   if(filterFiles) {

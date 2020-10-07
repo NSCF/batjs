@@ -30,11 +30,15 @@ module.exports = function(options){
   }
   else {
     options.fileTypes = options.fileTypes.split(/[\s,;|]+/)
+    options.fileTypes = options.fileTypes.filter(x => x && x.trim())
   }
 
-  options.fileTypes.forEach((type, index, arr) => {
+  options.fileTypes.map(type => {
     if (type[0] != '.'){
-      arr[index] = `.${type}`
+      return `.${type}`
+    }
+    else {
+      return type
     }
   })
 

@@ -49,9 +49,9 @@
       "program": "${workspaceFolder}\\index.js",
       "args": [
           "extract",
-          "-s H:\\Herbarium Specimen Images\\Wits Moss\\test",
-          "-m",
-          "-i"
+          "-s C:\\Users\\engelbrechti\\Google Drive\\SANBI NSCF\\NSCF Data WG\\Current projects\\Herp specimen digitization\\HerpSpecimenData\\Durban Herp Specimen Data\\datasheets\\REPTILES",
+          "-i",
+          "-t pdf"
       ],
       "console": "externalTerminal"
     },
