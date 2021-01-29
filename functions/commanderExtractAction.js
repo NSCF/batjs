@@ -1,5 +1,6 @@
 const co = require('co')
 const prompt = require('co-prompt')
+const { option } = require('commander')
 const fs = require('fs-extra')
 const path = require('path')
 
@@ -23,6 +24,10 @@ module.exports = function(options){
   }
   else {
     options.dest = options.dest.trim()
+  }
+
+  if (options.dest == options.source) { //we can't extract to the same dir
+    options.dest = path.join(options.dest, 'extract')
   }
 
   if(!options.fileTypes) {

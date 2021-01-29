@@ -121,7 +121,7 @@ module.exports = async function(sourcePath, destPath, moveFiles, recursive, targ
   if(filterFiles) {
     if(fs.lstatSync(filterFiles).isFile() && path.extname(filterFiles).toLowerCase() == '.txt') {  //must be a txt file
       let filesString = await fs.readFile(filterFiles)
-      let filterFileNames = filesString.split(/\s*[,;|]\s*/).filter(x => x).map(x => x.toUpperCase())
+      let filterFileNames = filesString.split(/[\s,;|]+/).filter(x => x).map(x => x.toUpperCase())
       targetFilePaths = targetFilePaths.filter(filePath => {
         let fname = path.basename(filePath).replace(path.extname(filePath), "").toUpperCase()
         return filterFileNames.includes(fname)
