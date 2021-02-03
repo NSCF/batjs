@@ -51,6 +51,7 @@
           "extract",
           "-s C:\\Users\\engelbrechti\\Google Drive\\SANBI NSCF\\NSCF Data WG\\Current projects\\Herp specimen digitization\\HerpSpecimenData\\Durban Herp Specimen Data\\datasheets\\REPTILES",
           "-i",
+          "-m",
           "-t pdf"
       ],
       "console": "externalTerminal"
@@ -60,6 +61,19 @@
       "request": "launch",
       "name": "Test batch func",
       "program": "${workspaceFolder}\\tests\\testBatchFiles.js"
-    }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Test extract copy with file",
+      "program": "${workspaceFolder}\\index.js",
+      "args": [
+          "extract",
+          "-s C:\\Users\\engelbrechti\\Google Drive\\SANBI NSCF\\NSCF Data WG\\Current projects\\Herp specimen digitization\\HerpSpecimenData\\Durban Herp Specimen Data\\datasheets\\REPTILES",
+          "-i",
+          "-f 'C:\\Users\\engelbrechti\\Desktop\\temp\\20210115_Global Argyrolobium species list_canonicalnames_barcodes.txt'"
+      ],
+      "console": "externalTerminal"
+    },
   ]
 }
