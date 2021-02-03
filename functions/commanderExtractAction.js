@@ -8,7 +8,7 @@ const extract = require('./extractFiles.js')
 
 module.exports = function(options){
 
-  if(!options.source) {
+  if(!options.source || !options.source.trim()) {
     options.source = process.cwd()
   }
   else {
@@ -19,7 +19,7 @@ module.exports = function(options){
     }
   }
 
-  if(!options.dest) {
+  if(!options.dest || !options.dest.trim()) {
     options.dest = options.source
   }
   else {
