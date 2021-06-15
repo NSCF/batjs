@@ -1,6 +1,5 @@
 const co = require('co')
 const prompt = require('co-prompt')
-const { option } = require('commander')
 const fs = require('fs-extra')
 const path = require('path')
 

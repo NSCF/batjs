@@ -75,7 +75,13 @@ module.exports = async function(sourcePath, destPath, batchSize, targetFileTypes
       for (var fileName of thisChunkFiles) {
         var oldPath = path.join(sourcePath, fileName)
         var newPath = path.join(destPath, `tempsub${counter}`, fileName)
-        moveFilePromiseArray.push(transferFunc(oldPath, newPath))
+        try {
+          moveFilePromiseArray.push(transferFunc(oldPath, newPath))
+        }
+        catch(err) {
+          console.error("Error moving/copying file", fileName)
+          console.error(err.message)
+        }
       }
 
       counter++ 

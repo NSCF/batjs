@@ -26,26 +26,26 @@ program
   .option('-d|--dest <dest>', 'the destrination directory to copy/move files to')
   .option('-n|--number <number>', 'the number of images or specimen occurrences to include in a batch -- see --by-occurrence')
   .option('-t|--file-types <filetypes>', 'file type extensions to include in the batch - default is .jpg, .jpeg')
-  .option('-ex|--exclude <exclude>', 'the file with barcodes to exclude')
+  .option('-ex|--exclude <exclude>', 'the file with barcodes to exclude (expects a single column csv, not a dataset')
   .option('-bo|--by-occurrence', 'flag to batch by occurrences, grouping on base barcode/catalog numbers')
   .option('-c|--copy', 'copy the existing files instead of just moving them, default is copy')
   .action(options => {
     batch(options)
-  })
+})
 
-  program
-    .command('extract')
-    .description('extract images from subfolders, optionally filtering by file type or folder names, into one folder')
-    .option('-s|--source <source>', 'the source/root directory to get files from')
-    .option('-d|--dest <target>', 'the target directory to copy/move files to')
-    .option('-i|--include-subdirs', 'include all subdirectories and their subdirectories in finding files to extract')
-    .option('-e|--end-dir <end-dir>', 'filter files only with immediate parent directories with this name')
-    .option('-a|--any-dir <any-dir>', 'filter files with this directory name anywhere in their file path')
-    .option('-f|--file-names <file-names>', 'a txt file with file names to filter on - only returns files listed in this file, excluding extensions')
-    .option('-t|--file-types <file-types>', 'file type extensions to include in the extraction - default is .jpg, .jpeg')
-    .option('-m|--move', 'move the files instead of copying them, default is copy')
-    .action(options => {
-      extract(options)
-    })
+program
+  .command('extract')
+  .description('extract images from subfolders, optionally filtering by file type or folder names, into one folder')
+  .option('-s|--source <source>', 'the source/root directory to get files from')
+  .option('-d|--dest <target>', 'the target directory to copy/move files to')
+  .option('-i|--include-subdirs', 'include all subdirectories and their subdirectories in finding files to extract')
+  .option('-e|--end-dir <end-dir>', 'filter files only with immediate parent directories with this name')
+  .option('-a|--any-dir <any-dir>', 'filter files with this directory name anywhere in their file path')
+  .option('-f|--file-names <file-names>', 'a txt file with file names to filter on - only returns files listed in this file, excluding extensions')
+  .option('-t|--file-types <file-types>', 'file type extensions to include in the extraction - default is .jpg, .jpeg')
+  .option('-m|--move', 'move the files instead of copying them, default is copy')
+  .action(options => {
+    extract(options)
+})
 
-  program.parse(process.argv)
+program.parse(process.argv)
