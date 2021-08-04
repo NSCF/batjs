@@ -26,8 +26,8 @@ program
   .option('-d|--dest <dest>', 'the destrination directory to copy/move files to')
   .option('-n|--number <number>', 'the number of images or specimen occurrences to include in a batch -- see --by-occurrence')
   .option('-t|--file-types <filetypes>', 'file type extensions to include in the batch - default is .jpg, .jpeg')
-  .option('-ex|--exclude <exclude>', 'the file with barcodes to exclude (expects a single column csv, not a dataset')
-  .option('-bo|--by-occurrence', 'flag to batch by occurrences, grouping on base barcode/catalog numbers')
+  .option('-x|--exclude <exclude>', 'the file with barcodes to exclude (expects a single column csv, not a dataset')
+  .option('-o|--by-occurrence', 'flag to batch by occurrences, grouping on base barcode/catalog numbers')
   .option('-c|--copy', 'copy the existing files instead of just moving them, default is copy')
   .action(options => {
     batch(options)

@@ -32,13 +32,16 @@ module.exports = function(options) {
     options.dest = options.dest.trim()
   }
   
+  let showfileTypesMessage = false
   if(!options.fileTypes) {
     options.fileTypes = ['.jpg', '.jpeg']
   }
   else {
-    options.fileTypes = options.fileTypes.split(/[\s,;|]+/)
+    showfileTypesMessage = true
+    options.fileTypes = options.fileTypes.trim().split(/[\s,;|]+/)
   }
 
+  //file extensions start with a .
   options.fileTypes.forEach((type, index, arr) => {
     if (type[0] != '.'){
       arr[index] = `.${type}`
@@ -53,10 +56,28 @@ module.exports = function(options) {
     promptMsg += 'move '
   }
 
+  if(showfileTypesMessage) {
+    let fileTypesString
+    if(options.fileTypes.length > 1) {
+      let last = options.fileTypes.pop()
+      fileTypesString = options.fileTypes.join(', ')
+      fileTypesString += ' and ' + last
+    }
+    else {
+      fileTypesString = options.fileTypes[0]
+    }
+    
+    promptMsg += fileTypesString + ' '
+  
+  }
+
   promptMsg += `files from ${options.source} to batches in ${options.dest} `
 
   if(!options.exclude) {
     promptMsg += 'with no exclude file'
+  }
+  else {
+    promptMsg += 'excluding any items listed in ' + options.exclude
   }
 
   promptMsg += '\n\nY/N: '

@@ -29,6 +29,22 @@
           "-c"
       ],
       "console": "externalTerminal"
+    }
+    ,
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Test batch copy exclude nef files",
+      "program": "${workspaceFolder}\\index.js",
+      "args": [
+          "batch",
+          "-s C:\\temp\\com_9438bersem_9438bersem",
+          "-n 4",
+          "-x \"C:\\temp\\com_9438bersem_9438bersem\\exclude.txt\"",
+          "-t nef cr2 tiff",
+          "-c"
+      ],
+      "console": "externalTerminal"
     },
     {
       "type": "node",

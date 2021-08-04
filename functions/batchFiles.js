@@ -20,12 +20,13 @@ module.exports = async function(sourcePath, destPath, batchSize, targetFileTypes
 
   var moveFilePromiseArray = []
 
-
   let targetFileTypesUpper = targetFileTypes.map(x => x.toUpperCase())
   var targetFiles = items.filter(item => {
     let itemExtUpper = path.extname(item).toUpperCase()
     return targetFileTypesUpper.includes(itemExtUpper)
   })
+
+  console.log('found', targetFiles.length, 'image files')
 
   //to simplify, make everything upper case
   //NB this might cause issues for moving files on case sensitive file systems
@@ -33,14 +34,29 @@ module.exports = async function(sourcePath, destPath, batchSize, targetFileTypes
 
   //remove if in exclude
   if(exclude && Array.isArray(exclude) && exclude.length > 0){
-    exclude = exclude.map(x => x.toUpperCase())
-    let fileBarcodes = targetFiles.map(f => f.replace(/\.[^/.]+$/, "")) //remove file extensions, see https://stackoverflow.com/questions/4250364/how-to-trim-a-file-extension-from-a-string-in-javascript/34301737
-    let barcodesToCapture = fileBarcodes.filter(fileBarcode => {
-      return !exclude.some(ex => fileBarcode == ex || (fileBarcode.startsWith(ex) && isNaN(fileBarcode[ex.length])))
-    })
-
-    targetFiles = targetFiles.filter(targetFile => barcodesToCapture.includes(targetFile.replace(/\.[^/.]+$/, "")))
-
+    //make a dictionary first, to be faster
+    const excludeSet = new Set()
+    for (let val of exclude) {
+      const match = val.match(/(\d)+/)
+      if(match && match.length) {
+        excludeSet.add(match[0])
+      }
+    }
+  
+    //we have to compare the number in the image barcode to what we have from the exclude file
+    const toInclude = [] //a temporary array
+    for (const targetFile of targetFiles) {
+      const fileName = path.basename(targetFile)
+      let match = fileName.match(/(\d)+/)
+      if(match) { //this shouldn't happen!
+        if(!excludeSet.has(match[0])){
+          toInclude.push(targetFile)
+        }
+      }
+    }
+  
+    targetFiles = toInclude //so it's now just the ones we want to move/copy
+    console.log(targetFiles.length, 'will be batched after excluding', exclude.length, 'existing records')
   }
 
   let transferFunc = moveFile
@@ -48,6 +64,7 @@ module.exports = async function(sourcePath, destPath, batchSize, targetFileTypes
     transferFunc = copyFile
   }
 
+  let counter = 0
   if(byOccurrence){
     //make a dictionary of occurrences
     let barcodesArray = targetFiles.map(targetFile => targetFile.replace(path.extname(targetFile), ""))
@@ -58,7 +75,6 @@ module.exports = async function(sourcePath, destPath, batchSize, targetFileTypes
     //move all the files
     let firstKeyInd = 0
     let lastKeyInd = firstKeyInd + batchSize
-    let counter = 0
     while (firstKeyInd < keys.length) {
       
       let thisChunkKeys = keys.slice(firstKeyInd, lastKeyInd)
@@ -94,7 +110,6 @@ module.exports = async function(sourcePath, destPath, batchSize, targetFileTypes
   else {
     let firstFileInd = 0
     let lastFileInd = firstFileInd + batchSize
-    let counter = 0
     while (firstFileInd < targetFiles.length) {
       
       let thisChunkFiles = targetFiles.slice(firstFileInd, lastFileInd)
@@ -112,49 +127,63 @@ module.exports = async function(sourcePath, destPath, batchSize, targetFileTypes
     }
   }
   
-  //once moved rename the folders
-  try{
+  
+  try {
+    console.log('batching files, this may take a few minutes')
     await Promise.all(moveFilePromiseArray)
   }
   catch(err) {
-    console.log('error moving files: ' + err)
-  }
-
-  var folderRenamePromises = []
-    
-  //get what's in the folder now
-  
-  var dirs = await fs.readdir(destPath)
-  dirs = dirs.filter(f => fs.statSync(path.join(destPath, f)).isDirectory())
-  dirs = dirs.filter(dir => dir.includes('tempsub')) //in case there are other folders
-
-  for (var dir of dirs) {
-    var dirPath = path.join(destPath, dir)
-    try {
-      var dirItems =  await fs.readdir(dirPath);
-    }
-    catch(err) {
-      console.log('error reading subdirectory ' + dir + ': ' + err)
-      return
-    }
-
-    dirItems.sort();
-    
-    var firstItem = dirItems[0]
-    var lastItem = dirItems[dirItems.length - 1]
-    var newFolderName = firstItem.replace(path.extname(firstItem), '') + ' - ' + lastItem.replace(path.extname(lastItem), '')
-    var newFolderPath = path.join(sourcePath, newFolderName) 
-    folderRenamePromises.push(fs.rename(dirPath, newFolderPath))
-  }
-
-  try{
-    await Promise.all(folderRenamePromises)
-  }
-  catch(err) {
-    console.log('Error renaming subfolders: ' + err) 
+    console.error('error moving files: ' + err)
     return
   }
 
+  if(counter) {
+    console.log('successfully moved', counter, 'file/s')
+  }
+  else {
+    console.log('no files were moved')
+  }
+
+  //once moved rename the folders
+  console.log('renaming temp folders')
+  if(counter) {
+    var folderRenamePromises = []
+    
+    //get what's in the folder now
+    var dirs = await fs.readdir(destPath)
+    dirs = dirs.filter(f => fs.statSync(path.join(destPath, f)).isDirectory())
+    dirs = dirs.filter(dir => dir.includes('tempsub')) //in case there are other folders
+  
+    for (var dir of dirs) {
+      var dirPath = path.join(destPath, dir)
+      try {
+        var dirItems =  await fs.readdir(dirPath);
+      }
+      catch(err) {
+        console.log('error reading subdirectory ' + dir + ': ' + err)
+        return
+      }
+  
+      dirItems.sort();
+      
+      var firstItem = dirItems[0]
+      var lastItem = dirItems[dirItems.length - 1]
+      var newFolderName = firstItem.replace(path.extname(firstItem), '') + ' - ' + lastItem.replace(path.extname(lastItem), '')
+      var newFolderPath = path.join(sourcePath, newFolderName) 
+      folderRenamePromises.push(fs.rename(dirPath, newFolderPath))
+    }
+  
+    try{
+      await Promise.all(folderRenamePromises)
+      console.log('folder names updated')
+    }
+    catch(err) {
+      console.log('Error renaming temp folders: ' + err) 
+      return
+    }
+  }
+
+  console.log('all done!')
   return
 
 }
