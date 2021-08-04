@@ -91,5 +91,18 @@
       ],
       "console": "externalTerminal"
     },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Test diff",
+      "program": "${workspaceFolder}\\index.js",
+      "args": [
+          "diff",
+          "-s C:\\temp\\com_9438bersem_9438bersem",
+          "-x exclude.txt",
+          "-t nef"
+      ],
+      "console": "externalTerminal"
+    }
   ]
 }

@@ -7,6 +7,7 @@ const { program } = require('commander')
 
 const batch = require('./functions/commanderBatchAction')
 const extract = require('./functions/commanderExtractAction')
+const diff = require('./functions/commanderDiffAction')
 
 
 program
@@ -21,12 +22,12 @@ program.on('--help', () => {
 
 program
   .command('batch')
-  .description('batch the images into set of folders with a specific number of images or occurrences each')
+  .description('batch images into folders with a specific number of images or occurrences each')
   .option('-s|--source <source>', 'the source/root directory to get files from')
   .option('-d|--dest <dest>', 'the destrination directory to copy/move files to')
-  .option('-n|--number <number>', 'the number of images or specimen occurrences to include in a batch -- see --by-occurrence')
+  .requiredOption('-n|--number <number>', 'the number of images or specimen occurrences to include in a batch -- see --by-occurrence')
   .option('-t|--file-types <filetypes>', 'file type extensions to include in the batch - default is .jpg, .jpeg')
-  .option('-x|--exclude <exclude>', 'the file with barcodes to exclude (expects a single column csv, not a dataset')
+  .option('-x|--exclude <exclude>', 'the file with barcodes to exclude (NB needs a single column csv/txt, not a dataset')
   .option('-o|--by-occurrence', 'flag to batch by occurrences, grouping on base barcode/catalog numbers')
   .option('-c|--copy', 'copy the existing files instead of just moving them, default is copy')
   .action(options => {
@@ -48,4 +49,13 @@ program
     extract(options)
 })
 
+program
+  .command('diff')
+  .description('count images that are not listed in a file')
+  .option('-s|--source <source>', 'the source/root directory to get files from')
+  .requiredOption('-x|--exclude <exclude>', 'the file with barcodes to exclude (NB needs a single column csv/txt, not a dataset')
+  .option('-t|--file-types <filetypes>', 'file type extensions to include in the count - default is .jpg, .jpeg')
+  .action(options => {
+    diff(options)
+  })
 program.parse(process.argv)

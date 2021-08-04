@@ -20,7 +20,7 @@ module.exports = function(options) {
   else {
     options.source = options.source.trim()
     if(!fs.existsSync(options.source)) {
-      console.log('Please add a source directory which exists')
+      console.error('Provided source directory does not exist')
       return 
     }
   }
@@ -93,7 +93,7 @@ module.exports = function(options) {
         exclude = excludeString.split(/[\s,;|]+/)
       }
 
-      try{
+      try {
         await batch(options.source, options.dest, options.number, options.fileTypes, 
         exclude, options.byOccurrence, options.copy)
       }
