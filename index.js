@@ -9,6 +9,7 @@ const batch = require('./functions/commanderBatchAction')
 const extract = require('./functions/commanderExtractAction')
 const diff = require('./functions/commanderDiffAction')
 const rename = require('./functions/commanderRenameAction')
+const unrename = require('./functions/commanderUnrenameAction')
 
 
 program
@@ -69,5 +70,14 @@ program
   .action(options => {
     rename(options)
   })
+
+program
+  .command('unrename')
+  .description('undo changes made by rename')
+  .option('-d|--dir <directory>', 'the directory of the that were renamed')
+  .action(options => {
+    unrename(options)
+  })
+
 
 program.parse(process.argv)

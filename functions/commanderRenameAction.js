@@ -4,6 +4,9 @@ const fs = require('fs-extra')
 const path = require('path')
 const csv = require('fast-csv')
 
+const readCSV = require('../utils/readCSV')
+const onlyUnique = require('../utils/onlyUnique')
+
 module.exports = async function(options) {
 
   if(!options.fileTypes || !options.fileTypes.trim()) {
@@ -188,21 +191,4 @@ module.exports = async function(options) {
     process.exit(0)
 
   }
-}
-
-function readCSV(filePath, fileName) {
-  return new Promise((resolve, reject) =>{
-    const records = []
-    csv.parseFile(path.join(filePath, fileName), {headers: true})
-    .on('error', error => reject(error))
-    .on('data', row => records.push(row))
-    .on('end', rowCount => {
-      console.log(`Parsed ${rowCount} rows from ${fileName}`)
-      resolve(records)
-    });
-  })
-}
-
-function onlyUnique(value, index, self) {
-  return self.indexOf(value) === index;
 }
