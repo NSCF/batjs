@@ -103,6 +103,18 @@
           "-t nef"
       ],
       "console": "externalTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Test rename",
+      "program": "${workspaceFolder}\\index.js",
+      "args": [
+          "rename",
+          "-d C:\\temp\\Herbarium mass digitization project\\Images\\PRE\\Crassulaceae\\orig",
+          "-t .cr2"
+      ],
+      "console": "externalTerminal"
     }
   ]
 }

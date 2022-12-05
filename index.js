@@ -8,6 +8,7 @@ const { program } = require('commander')
 const batch = require('./functions/commanderBatchAction')
 const extract = require('./functions/commanderExtractAction')
 const diff = require('./functions/commanderDiffAction')
+const rename = require('./functions/commanderRenameAction')
 
 
 program
@@ -24,7 +25,7 @@ program
   .command('batch')
   .description('batch images into folders with a specific number of images or occurrences each')
   .option('-s|--source <source>', 'the source/root directory to get files from')
-  .option('-d|--dest <dest>', 'the destrination directory to copy/move files to')
+  .option('-d|--dest <dest>', 'the destination directory to copy/move files to')
   .requiredOption('-n|--number <number>', 'the number of images or specimen occurrences to include in a batch -- see --by-occurrence')
   .option('-t|--file-types <filetypes>', 'file type extensions to include in the batch - default is .jpg, .jpeg')
   .option('-x|--exclude <exclude>', 'the file with barcodes to exclude (NB needs a single column csv/txt, not a dataset')
@@ -58,4 +59,15 @@ program
   .action(options => {
     diff(options)
   })
+
+program
+  .command('rename')
+  .description('rename images in a folder using a list of barcodes')
+  .option('-d|--dir <directory>', 'the directory of the files and barcode list (default is current directory)')
+  .option ('-f|--field <barcodeField>', 'the the barcode field in the csv file, default is `barcode`')
+  .option('-t|--file-types <filetypes>', 'file type extensions to include in the count - default is .cr')
+  .action(options => {
+    rename(options)
+  })
+
 program.parse(process.argv)
