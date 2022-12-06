@@ -8,7 +8,7 @@ module.exports = function readCSV(filePath, fileName) {
     .on('error', error => reject(error))
     .on('data', row => records.push(row))
     .on('end', rowCount => {
-      console.log(`Parsed ${rowCount} rows from ${fileName}`)
+      console.log(`Parsed ${rowCount} records from ${fileName}`)
       resolve(records)
     });
   })

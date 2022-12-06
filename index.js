@@ -73,7 +73,7 @@ program
 
 program
   .command('unrename')
-  .description('undo changes made by rename')
+  .description('undo changes made by rename (default is current directory)')
   .option('-d|--dir <directory>', 'the directory of the that were renamed')
   .action(options => {
     unrename(options)
