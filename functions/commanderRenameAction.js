@@ -112,6 +112,9 @@ module.exports = async function(options) {
         process.exit()
       }
     }
+
+    //filter records with no barcode value
+    records = records.filter(x => x[barcodeField] != null && x[barcodeField].trim() != '')
     
     //check the number of records in the csv equals the number of files
     if (records.length != images.length) {
@@ -136,20 +139,19 @@ module.exports = async function(options) {
     }
 
     console.log('Renaming files...')
-    let lastBarcode = null
-    let dupCounter = 0
+    const updatedBarcodes = {} //we have to use this to track duplicates because they might not be sequential
     const originalnames = []
     for (const [index, imageName] of images.entries()) {
       const barcode = records[index][barcodeField].trim()
       let fileExt = imageName.split('.').pop()
       fileExt = '.' + fileExt
       let newName = barcode
-      if(barcode == lastBarcode){
-        newName += '_' + dupCounter + 1
-        dupCounter++
+      if(updatedBarcodes.hasOwnProperty(barcode)){
+        updatedBarcodes[barcode]++
+        newName += '_' + updatedBarcodes[barcode]
       }
       else {
-        dupCounter = 0
+        updatedBarcodes[barcode] = 0
       }
 
       newName += fileExt
@@ -189,6 +191,5 @@ module.exports = async function(options) {
   else {
     console.log('Have a great day...')
     process.exit(0)
-
   }
 }
