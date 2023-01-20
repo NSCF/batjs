@@ -61,6 +61,8 @@ module.exports = async function(options) {
       process.exit()
     }
 
+    console.log(images.length, 'images found')
+
     if(csvs.length == 0) {
       console.error('No csv file found in the directory. Please make sure there is a csv file with barcodes for renaming files')
       process.exit()

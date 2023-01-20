@@ -111,8 +111,8 @@
       "program": "${workspaceFolder}\\index.js",
       "args": [
           "rename",
-          "-d C:\\temp\\Herbarium mass digitization project\\Images\\PRE\\Crassulaceae\\orig",
-          "-t .cr2"
+          "-d H:\\temp\\Herbarium imaging\\PRE\\Crassulaceae\\20230116",
+          "-t cr3"
       ],
       "console": "externalTerminal"
     },
