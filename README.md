@@ -1,9 +1,11 @@
-# File extraction and grouping tool
+# Herbarium specimen image management utilities
 
-For managing large numbers of files spread across unspecified folder structures, e.g. pull all jpgs out of a set of folders. 
+- extract files spread across multiple folders
+- filter on folder names, file names, or file types
+- rename images using a file with image names (e.g. barcodes)
 
-Has options to filter on folder names, file names, or file types.
+Coming soon: sort a set of specimen images into family folders
 
-Git clone and then install with `npm install -g` in the root folder.
+To install clone this repo and then install with `npm install -g` in the root folder.
 
-Run `batjs --help` for options or `batjs <command> --help` for command options.
+Run `batjs --help` for all commands or `batjs <command> --help` for individual command options.
