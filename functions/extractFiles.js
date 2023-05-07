@@ -6,6 +6,7 @@ const moveFile = require('move-file');
 const fs = require('fs-extra') //for reading contents on a dir only (not recursive)
 const dir = require('node-dir') //for recursively reading directories
 const path = require('path')
+const readCSV = require('../utils/readCSV.js')
 
 /**
  * sourcePath is a directory containing all the folders with family names - it must exist
@@ -67,20 +68,6 @@ module.exports = async function(sourcePath, destPath, moveFiles, recursive, targ
     return
   }
 
-  targetFileTypes = targetFileTypes.map(type => {
-    if(type[0] != '.') {
-      return '.' + type
-    }
-    else {
-      return type
-    }
-  })
-
-  if (targetFilePaths.length == 0) {
-    console.log('no files match the criteria to transfer')
-    return
-  }
-
   let targetFileTypesUpper = targetFileTypes.map(x => x.toUpperCase())
   targetFilePaths = targetFilePaths.filter(item => {
     let itemExtUpper = path.extname(item).toUpperCase()
@@ -88,7 +75,7 @@ module.exports = async function(sourcePath, destPath, moveFiles, recursive, targ
   })
 
   if (targetFilePaths.length == 0) {
-    console.log('no files match the criteria to transfer')
+    console.log('no files with file types', targetFileTypes.join(' '))
     return
   }
 
@@ -101,36 +88,47 @@ module.exports = async function(sourcePath, destPath, moveFiles, recursive, targ
   }
 
   if (targetFilePaths.length == 0) {
-    console.log('no files match the criteria to transfer')
+    console.log('no files in folder/s', anyDir)
     return
   }
 
   if(endDir) {
-    let endPart
     targetFilePaths = targetFilePaths.filter(filePath => {
-      endPart = filePath.split(/[\\\/]/).pop().toUpperCase()
+      let endPart = filePath.split(/[\\\/]/).pop().toUpperCase()
       return endPart == endDir.toUpperCase()
     })
   }
 
   if (targetFilePaths.length == 0) {
-    console.log('no files match the criteria to transfer')
+    console.log('no files in folder/s', endDir)
     return
   }
 
   if(filterFiles) {
-    if(fs.lstatSync(filterFiles).isFile() && path.extname(filterFiles).toLowerCase() == '.txt') {  //must be a txt file
-      let filesString = await fs.readFile(filterFiles, "utf8")
-      let filterFileNames = filesString.split(/[\r\n,;|]+/).filter(x => x && x.trim()).map(x => x.trim().toUpperCase())
-      targetFilePaths = targetFilePaths.filter(filePath => {
-        let fname = path.basename(filePath).replace(path.extname(filePath), "").toUpperCase()
-        return filterFileNames.includes(fname)
-      })
-    } 
+    
+    if(fs.lstatSync(filterFiles).isFile()) {
+      if (path.extname(filterFiles).toLowerCase() == '.txt') {
+        let filesString = await fs.readFile(filterFiles, "utf8")
+        let filterFileNames = filesString.split(/[\r\n,;|]+/).filter(x => x && x.trim()).map(x => x.trim().toUpperCase())
+        targetFilePaths = targetFilePaths.filter(filePath => {
+          let fname = path.basename(filePath).replace(path.extname(filePath), "").toUpperCase()
+          return filterFileNames.some(x => x.startsWith(fname))
+        })
+      } 
+      //csv file
+      else if (path.extname(filterFiles).toLowerCase() == '.csv') {
+        const csvData = await readCSV(filterFiles)
+        const filterBarcodes = csvData.map(x => x['barcode'].toUpperCase())
+        targetFilePaths = targetFilePaths.filter(filePath => {
+          let fname = path.basename(filePath).replace(path.extname(filePath), "").toUpperCase()
+          return filterBarcodes.some(x => x.startsWith(fname))
+        })
+      }
+    }
   }
 
   if (targetFilePaths.length == 0) {
-    console.log('no files match the criteria to transfer')
+    console.log('no files match', path.basename(filterFiles))
     return
   }
 
@@ -142,32 +140,34 @@ module.exports = async function(sourcePath, destPath, moveFiles, recursive, targ
     moveFilePromiseArray.push(transferFile(targetFilePath, newFilePath, transferFunc))
   }
 
+  let transferResults
   try {
-    let transferResults = await Promise.all(moveFilePromiseArray)
-    let summary = {}
-    transferResults.forEach(res =>{
-      if(!res) {
-        if(summary[res.err.code]) {
-          summary[res.err.code].push(res.file)
-        }
-        else {
-          summary[res.err.code] = [res.file]
-        }
-      }
-    })
-
-    let keys = Object.keys(summary)
-    if (keys.length > 0) {
-      console.log('file transfer complete with the following errors :')
-      keys.forEach(key => console.log(`${key}: ${summary[key].join(',')}`))
-    }
-    else {
-      console.log('file transfer complete without errors')
-    }
+    transferResults = await Promise.all(moveFilePromiseArray)
   }
   catch(err){
     console.log('error moving files: ', err.message)
     return
+  }
+
+  let summary = {}
+  transferResults.forEach(res =>{
+    if(!res) {
+      if(summary[res.err.code]) {
+        summary[res.err.code].push(res.file)
+      }
+      else {
+        summary[res.err.code] = [res.file]
+      }
+    }
+  })
+
+  let keys = Object.keys(summary)
+  if (keys.length > 0) {
+    console.log('file transfer complete with the following errors :')
+    keys.forEach(key => console.log(`${key}: ${summary[key].join(',')}`))
+  }
+  else {
+    console.log('file transfer complete without errors')
   }
 
   if (moveFile) {
@@ -180,7 +180,7 @@ module.exports = async function(sourcePath, destPath, moveFiles, recursive, targ
 }
 
 function transferFile(sourcePath, destPath, transferFunc) {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     transferFunc(sourcePath, destPath)
     .then(_ => resolve(true))
     .catch(err => {

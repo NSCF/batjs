@@ -85,9 +85,10 @@
       "program": "${workspaceFolder}\\index.js",
       "args": [
           "extract",
-          "-s C:\\Users\\engelbrechti\\Google Drive\\SANBI NSCF\\NSCF Data WG\\Current projects\\Herp specimen digitization\\HerpSpecimenData\\Durban Herp Specimen Data\\datasheets\\REPTILES",
+          "-s F:\\Herbarium imaging\\PRU\\final\\Ferns-Algae",
           "-i",
-          "-f 'C:\\Users\\engelbrechti\\Desktop\\temp\\20210115_Global Argyrolobium species list_canonicalnames_barcodes.txt'"
+          "-t cr3",
+          "-f C:\\devprojects\\brahms-barcode-hunter\\not_captured.csv"
       ],
       "console": "externalTerminal"
     },

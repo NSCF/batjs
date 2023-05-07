@@ -1,6 +1,6 @@
 {
   "name": "batjs",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A utility for extracting images of specimens from a directory and its subdirectories and batching them into folders of a specific number of specimens. The name a play on 'batches', and hints at the language used",
   "main": "index.js",
   "scripts": {
@@ -16,10 +16,10 @@
     "co": "^4.6.0",
     "co-prompt": "^1.0.0",
     "commander": "^5.0.0",
-    "cp-file": "^7.0.0",
+    "cp-file": "^10.0.0",
     "fast-csv": "^4.3.6",
     "fs-extra": "^8.1.0",
-    "move-file": "^1.2.0",
+    "move-file": "^3.1.0",
     "node-dir": "^0.1.17"
   }
 }

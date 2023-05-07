@@ -37,7 +37,7 @@ module.exports = function(options){
     options.fileTypes = options.fileTypes.filter(x => x && x.trim())
   }
 
-  options.fileTypes.map(type => {
+  options.fileTypes = options.fileTypes.map(type => {
     if (type[0] != '.'){
       return `.${type}`
     }
@@ -45,6 +45,11 @@ module.exports = function(options){
       return type
     }
   })
+
+  if (options.fileNames){ 
+    options.fileNames = options.fileNames.trim()
+  }
+
 
   let promptMsg = '\nAre you sure you want to '
   if(options.move){
