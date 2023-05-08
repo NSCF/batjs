@@ -1,5 +1,5 @@
 //a basic diff for barcodes in two files, this should probably be its own command TODO
-const fs = require('fs-extra');
+import fs from 'fs-extra'
 
 const existingBarcodesFile = `Fabaceae_BrahmsExtract.CSV`
 const imageFileNames = `image filenames.txt`

@@ -1,6 +1,4 @@
-module.exports = makeDictionary
-
-function makeDictionary(barcodeArray){
+export default function makeDictionary(barcodeArray){
   barcodeArray = barcodeArray.map(b => b.toUpperCase())
   let occurrenceGroups = {}
   for (let [index, barcode] of barcodeArray.entries()) {

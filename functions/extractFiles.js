@@ -1,12 +1,14 @@
 //read all files in subfolders and copy to a new folder, such as on another hard drive
 //for unbatching images in subfolders
 
-const copyFile = require('cp-file')
-const moveFile = require('move-file');
-const fs = require('fs-extra') //for reading contents on a dir only (not recursive)
-const dir = require('node-dir') //for recursively reading directories
-const path = require('path')
-const readCSV = require('../utils/readCSV.js')
+import { copyFile } from 'cp-file'
+import { moveFile } from 'move-file'
+import fs from 'fs-extra' //for reading contents on a dir only (not recursive)
+import dir from 'node-dir' //for recursively reading directories
+import path from 'path'
+
+
+import readCSV from '../utils/readCSV.js'
 
 /**
  * sourcePath is a directory containing all the folders with family names - it must exist
@@ -17,7 +19,7 @@ const readCSV = require('../utils/readCSV.js')
  * endDir is for filtering on the name of the immediate parent directory of files
  * anydir is for filtering on any parent directory of files
  */
-module.exports = async function(sourcePath, destPath, moveFiles, recursive, targetFileTypes, endDir, anyDir, filterFiles){
+export default async function(sourcePath, destPath, moveFiles, recursive, targetFileTypes, endDir, anyDir, filterFiles){
 
   var sourcePath = path.resolve(process.cwd(), sourcePath)
 

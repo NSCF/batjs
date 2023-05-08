@@ -1,13 +1,13 @@
-const co = require('co')
-const prompt = require('co-prompt')
-const fs = require('fs-extra')
-const path = require('path')
-const csv = require('fast-csv')
+import co from 'co'
+import prompt from 'co-prompt'
+import fs from 'fs-extra'
+import path from 'path'
+import csv from 'fast-csv'
 
-const readCSV = require('../utils/readCSV')
-const onlyUnique = require('../utils/onlyUnique')
+import readCSV from '../utils/readCSV.js'
+import onlyUnique from '../utils/onlyUnique.js'
 
-module.exports = async function(options) {
+export default async function(options) {
 
   if(!options.fileTypes || !options.fileTypes.trim()) {
     options.fileTypes = '.cr2'
@@ -170,7 +170,6 @@ module.exports = async function(options) {
         }
 
         originalnames.push(update)
-        lastBarcode = barcode
       }
       catch(err) {
         console.error('There was an error renaming files:', err.message)

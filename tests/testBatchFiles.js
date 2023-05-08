@@ -1,4 +1,4 @@
-const batch = require('../functions/batchFiles')
+import batch from '../functions/batchFiles.js'
 
 async function testbatch() {
   let source = String.raw`H:\Herbarium Specimen Images\Wits Moss\test`

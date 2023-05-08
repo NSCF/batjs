@@ -1,10 +1,10 @@
-const co = require('co')
-const prompt = require('co-prompt')
-const fs = require('fs-extra')
+import co from 'co'
+import prompt from 'co-prompt'
+import fs from 'fs-extra'
 
-const batch = require('./batchFiles')
+import batch from './batchFiles.js'
 
-module.exports = function(options) {
+export default function(options) {
     
   if(!options.number || isNaN(options.number)){
     console.log("Please specify the number of images/occurrences to include in a batch with the -n|--number flag")

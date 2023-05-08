@@ -1,11 +1,11 @@
-const co = require('co')
-const prompt = require('co-prompt')
-const fs = require('fs-extra')
-const path = require('path')
+import co from 'co'
+import prompt from 'co-prompt'
+import fs from 'fs-extra'
+import path from 'path'
 
-const extract = require('./extractFiles.js')
+import extract from './extractFiles.js'
 
-module.exports = function(options){
+export default function(options){
 
   if(!options.source || !options.source.trim()) {
     options.source = process.cwd()

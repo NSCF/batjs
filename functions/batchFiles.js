@@ -1,11 +1,11 @@
-const moveFile = require('move-file');
-const copyFile = require('cp-file')
-const fs = require('fs-extra');
-const path = require('path');
+import { moveFile } from 'move-file'
+import { copyFile } from 'cp-file'
+import fs from 'fs-extra'
+import path from 'path'
 
-const makeDictionary = require('./makeDictionary.js')
+import makeDictionary from './makeDictionary.js'
 
-module.exports = async function(sourcePath, destPath, batchSize, targetFileTypes, exclude, byOccurrence, copy){
+export default async function(sourcePath, destPath, batchSize, targetFileTypes, exclude, byOccurrence, copy) {
 
   var sourcePath = path.resolve(process.cwd(), sourcePath)
   

@@ -1,8 +1,8 @@
 //This is a simple operation so no separate function module is used
-const path = require('path');
-const fs = require('fs-extra');
+import path from 'path'
+import fs from 'fs-extra'
 
-module.exports = async function(options) {
+export default async function(options) {
 
   if(!options.source) {
     options.source = process.cwd()

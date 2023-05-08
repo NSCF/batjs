@@ -1,8 +1,8 @@
-const csv = require('fast-csv')
-const path = require('path')
+import csv from 'fast-csv'
+import path from 'path'
 
-module.exports = function readCSV(filePath, fileName) {
-  return new Promise((resolve, reject) =>{
+export default function readCSV(filePath, fileName) {
+  return new Promise((resolve, reject) => {
     const records = []
 
     let file = null

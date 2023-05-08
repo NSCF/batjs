@@ -7,6 +7,16 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Test help",
+      "program": "${workspaceFolder}\\index.js",
+      "args": [
+          "--help"
+      ],
+      "console": "externalTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Test batch move",
       "program": "${workspaceFolder}\\index.js",
       "args": [

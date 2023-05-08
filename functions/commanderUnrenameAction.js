@@ -1,12 +1,12 @@
-const co = require('co')
-const prompt = require('co-prompt')
-const fs = require('fs-extra')
-const path = require('path')
+import co from 'co'
+import prompt from 'co-prompt'
+import fs from 'fs-extra'
+import path from 'path'
 
 
-const readCSV = require('../utils/readCSV')
+import readCSV from '../utils/readCSV.js'
 
-module.exports = async function(options) {
+export default async function(options) {
 
   if(!options.dir) {
     options.dir = process.cwd()

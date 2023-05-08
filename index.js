@@ -1,15 +1,14 @@
 #!/usr/bin/env node
+import path from 'path'
+import fs from 'fs'
 
-const path = require('path')
-const fs = require('fs')
+import { program } from 'commander'
 
-const { program } = require('commander')
-
-const batch = require('./functions/commanderBatchAction')
-const extract = require('./functions/commanderExtractAction')
-const diff = require('./functions/commanderDiffAction')
-const rename = require('./functions/commanderRenameAction')
-const unrename = require('./functions/commanderUnrenameAction')
+import batch from './functions/commanderBatchAction.js'
+import extract from './functions/commanderExtractAction.js'
+import diff from './functions/commanderDiffAction.js'
+import rename from './functions/commanderRenameAction.js'
+import unrename from './functions/commanderUnrenameAction.js'
 
 
 program
