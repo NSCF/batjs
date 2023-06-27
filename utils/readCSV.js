@@ -17,7 +17,7 @@ export default function readCSV(filePath, fileName) {
     .on('error', error => reject(error))
     .on('data', row => records.push(row))
     .on('end', rowCount => {
-      console.log(`Parsed ${rowCount} records from ${fileName}`)
+      console.log(`Parsed ${rowCount} records from ${fileName || path.basename(filePath)}`)
       resolve(records)
     });
   })

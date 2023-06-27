@@ -91,7 +91,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Test extract copy with file",
+      "name": "Test extract copy with file list",
       "program": "${workspaceFolder}\\index.js",
       "args": [
           "extract",

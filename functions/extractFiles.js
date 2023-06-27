@@ -1,14 +1,17 @@
 //read all files in subfolders and copy to a new folder, such as on another hard drive
 //for unbatching images in subfolders
 
-import { copyFile } from 'cp-file'
-import { moveFile } from 'move-file'
+import path from 'path'
 import fs from 'fs-extra' //for reading contents on a dir only (not recursive)
 import dir from 'node-dir' //for recursively reading directories
-import path from 'path'
+import { copyFile } from 'cp-file'
+import { moveFile } from 'move-file'
+import { Bar } from 'cli-progress'
 
 
 import readCSV from '../utils/readCSV.js'
+import writeCSV from '../utils/writeCSV.js'
+import onlyUnique from '../utils/onlyUnique.js'
 
 /**
  * sourcePath is a directory containing all the folders with family names - it must exist
@@ -19,7 +22,7 @@ import readCSV from '../utils/readCSV.js'
  * endDir is for filtering on the name of the immediate parent directory of files
  * anydir is for filtering on any parent directory of files
  */
-export default async function(sourcePath, destPath, moveFiles, recursive, targetFileTypes, endDir, anyDir, filterFiles){
+export default async function(sourcePath, destPath, moveFiles, recursive, targetFileTypes, endDir, anyDir, filterFiles) {
 
   var sourcePath = path.resolve(process.cwd(), sourcePath)
 
@@ -64,6 +67,10 @@ export default async function(sourcePath, destPath, moveFiles, recursive, target
   }
   
   targetFilePaths = targetFilePaths.filter(item => path.extname(item)) //shouldn't be necessary but just in case...
+
+  //just to see what the max number of dups is...
+  const dups = targetFilePaths.map(x => path.basename(x).replace(path.extname(x), '').split('_')[1] || null)
+  const max = Math.max(...dups)
 
   if (targetFilePaths.length == 0) {
     console.log('no files match the criteria to transfer')
@@ -114,19 +121,45 @@ export default async function(sourcePath, destPath, moveFiles, recursive, target
         let filterFileNames = filesString.split(/[\r\n,;|]+/).filter(x => x && x.trim()).map(x => x.trim().toUpperCase())
         targetFilePaths = targetFilePaths.filter(filePath => {
           let fname = path.basename(filePath).replace(path.extname(filePath), "").toUpperCase()
-          return filterFileNames.some(x => x.startsWith(fname))
+          return filterFileNames.some(x => {
+            return fname.startsWith(x)
+          })
         })
       } 
       //csv file
       else if (path.extname(filterFiles).toLowerCase() == '.csv') {
         const csvData = await readCSV(filterFiles)
-        const filterBarcodes = csvData.map(x => x['barcode'].toUpperCase())
+        const filterBarcodes = csvData.map(x => x['barcode'].toUpperCase()) //these are barcodes that are not in the database, with no bits on the end
         targetFilePaths = targetFilePaths.filter(filePath => {
           let fname = path.basename(filePath).replace(path.extname(filePath), "").toUpperCase()
-          return filterBarcodes.some(x => x.startsWith(fname))
+          return filterBarcodes.some(x => fname.startsWith(x))
         })
       }
     }
+  }
+
+  //for testing, write out the barcodes that have been selected...
+  try {
+    const writeFileNames = targetFilePaths.map(x => path.basename(x))
+    targetFilePaths.sort((a, b) => {
+      const firstFileName = path.basename(a)
+      const secondFileName = path.basename(b)
+      if(firstFileName < secondFileName) {
+        return -1
+      }
+      else if (secondFileName < firstFileName) {
+        return 1
+      }
+      else {
+        return 0
+      }
+    })
+    const uniqueWriteFileNames = writeFileNames.filter(onlyUnique)
+    const writeFileRecords = uniqueWriteFileNames.map(x => ({filename: x}))
+    await writeCSV(writeFileRecords, path.resolve('./'), 'moveFileNames.csv')
+  }
+  catch(err) {
+    console.error('error writing file:', err.message)
   }
 
   if (targetFilePaths.length == 0) {
@@ -134,59 +167,34 @@ export default async function(sourcePath, destPath, moveFiles, recursive, target
     return
   }
 
-  //else
-  let moveFilePromiseArray = [];
+  const uniqueFilePaths = targetFilePaths.filter(onlyUnique)
+
+  //The actual transfer of files...
+  const bar = new Bar()
+  bar.start(targetFilePaths.length, 0)
   for (const targetFilePath of targetFilePaths) {
     let fileName = path.basename(targetFilePath)
     let newFilePath = path.join(destPath, fileName)
-    moveFilePromiseArray.push(transferFile(targetFilePath, newFilePath, transferFunc))
-  }
-
-  let transferResults
-  try {
-    transferResults = await Promise.all(moveFilePromiseArray)
-  }
-  catch(err){
-    console.log('error moving files: ', err.message)
-    return
-  }
-
-  let summary = {}
-  transferResults.forEach(res =>{
-    if(!res) {
-      if(summary[res.err.code]) {
-        summary[res.err.code].push(res.file)
-      }
-      else {
-        summary[res.err.code] = [res.file]
-      }
+    try {
+      await transferFunc(targetFilePath, newFilePath)
+      bar.increment()
     }
-  })
-
-  let keys = Object.keys(summary)
-  if (keys.length > 0) {
-    console.log('file transfer complete with the following errors :')
-    keys.forEach(key => console.log(`${key}: ${summary[key].join(',')}`))
-  }
-  else {
-    console.log('file transfer complete without errors')
+    catch(err) {
+      bar.stop()
+      console.error(`Error copying file ${fileName}: ${err.message}`)
+      process.exit()
+    }
   }
 
-  if (moveFile) {
+  bar.stop()
+
+  if (moveFiles) {
     console.log(`${targetFilePaths.length} files successfully moved`)
   }
   else {
     console.log(`${targetFilePaths.length} files successfully copied`)
   }
-  return
-}
 
-function transferFile(sourcePath, destPath, transferFunc) {
-  return new Promise((resolve, reject) => {
-    transferFunc(sourcePath, destPath)
-    .then(_ => resolve(true))
-    .catch(err => {
-      resolve( { file: sourcePath,  err: err } )
-    })
-  })
+  return
+
 }

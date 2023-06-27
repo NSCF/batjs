@@ -110,7 +110,7 @@ export default async function(options) {
       })
 
       if (barcodeField == null) {
-        console.err('The csv file has no barcode field. Please check the file and try again')
+        console.error('The csv file has no barcode field. Please check the file and try again')
         process.exit()
       }
     }

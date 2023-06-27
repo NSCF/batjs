@@ -4,6 +4,7 @@ import fs from 'fs-extra'
 import path from 'path'
 
 import makeDictionary from './makeDictionary.js'
+import writeCSV from '../utils/writeCSV.js'
 
 export default async function(sourcePath, destPath, batchSize, targetFileTypes, exclude, byOccurrence, copy) {
 
@@ -100,6 +101,10 @@ export default async function(sourcePath, destPath, batchSize, targetFileTypes, 
         }
       }
 
+      //write the csv of all the barcodes
+      const barcodeRecords = keys.map(key => ({barcode: key}))
+      await writeCSV(barcodeRecords, path.join(destPath, `tempsub${counter}`), 'barcodes.csv')
+
       counter++ 
 
       firstKeyInd = lastKeyInd
@@ -113,11 +118,17 @@ export default async function(sourcePath, destPath, batchSize, targetFileTypes, 
     while (firstFileInd < targetFiles.length) {
       
       let thisChunkFiles = targetFiles.slice(firstFileInd, lastFileInd)
+      const barcodes = []
       for (var fileName of thisChunkFiles) {
+        const barcode = path.basename(fileName).replace(/\.[^/.]+$/, "")
+        barcodes.push(barcode)
         var oldPath = path.join(sourcePath, fileName)
         var newPath = path.join(destPath, `tempsub${counter}`, fileName)
         moveFilePromiseArray.push(transferFunc(oldPath, newPath))
       }
+
+      const barcodeRecords = barcodes.map(barcode => ({barcode}))
+      await writeCSV(barcodeRecords, path.join(destPath, `tempsub${counter}`), 'barcodes.csv')
 
       counter++ 
 
