@@ -143,7 +143,19 @@ export default async function(options) {
     console.log('Renaming files...')
     const updatedBarcodes = {} //we have to use this to track duplicates because they might not be sequential
     const originalnames = []
-    for (const [index, imageName] of images.entries()) {
+
+    // we need the time taken of each image to rename them in sequence (and not by order of the file names)
+    const imageStats = []
+    for (const image of images) {
+      const stats = fs.statSync(path.join(options.dir, image))
+      stats.image = image
+      imageStats.push(stats)
+    }
+
+    imageStats.sort((a, b) => a.birthtime - b.birthtime)
+    const sortedImages = imageStats.map(x => x.image)
+
+    for (const [index, imageName] of sortedImages.entries()) {
       const barcode = records[index][barcodeField].trim()
       let fileExt = imageName.split('.').pop()
       fileExt = '.' + fileExt
