@@ -145,6 +145,18 @@
           "-d C:\\temp\\Herbarium mass digitization project\\Images\\PRE\\Crassulaceae\\orig"
       ],
       "console": "externalTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Test copynames",
+      "program": "${workspaceFolder}\\index.js",
+      "args": [
+          "copynames",
+          "-d C:\\Users\\ianic\\OneDrive\\Desktop\\temp\\rename",
+          "-t jpg"
+      ],
+      "console": "externalTerminal"
     }
   ]
 }

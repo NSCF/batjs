@@ -9,6 +9,7 @@ import extract from './functions/commanderExtractAction.js'
 import diff from './functions/commanderDiffAction.js'
 import rename from './functions/commanderRenameAction.js'
 import unrename from './functions/commanderUnrenameAction.js'
+import copyNames from './functions/commanderCopyFileNameAction.js'
 
 
 program
@@ -65,7 +66,7 @@ program
   .description('rename images in a folder using a list of barcodes')
   .option('-d|--dir <directory>', 'the directory of the files and barcode list (default is current directory)')
   .option ('-f|--field <barcodeField>', 'the the barcode field in the csv file, default is `barcode`')
-  .option('-t|--file-types <filetypes>', 'file type extensions to include in the count - default is .cr')
+  .option('-t|--file-types <filetypes>', 'file type extensions to include in the count - default is .cr2')
   .action(options => {
     rename(options)
   })
@@ -78,5 +79,13 @@ program
     unrename(options)
   })
 
+program
+  .command('copynames')
+  .description('copy file names of a particular file type to the clipboard')
+  .option('-d|--dir <directory>', 'the directory to copy file names from')
+  .option('-t|--file-types <filetypes>', 'file type extensions to include in the count - default is .cr2')
+  .action(options => {
+    copyNames(options)
+  })
 
 program.parse(process.argv)
