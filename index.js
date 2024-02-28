@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-import path from 'path'
-import fs from 'fs'
 
 import { program } from 'commander'
 
@@ -10,6 +8,7 @@ import diff from './functions/commanderDiffAction.js'
 import rename from './functions/commanderRenameAction.js'
 import unrename from './functions/commanderUnrenameAction.js'
 import copyNames from './functions/commanderCopyFileNameAction.js'
+import uniquify from './functions/commanderUniquifyCSVField.js'
 
 
 program
@@ -86,6 +85,16 @@ program
   .option('-t|--file-types <filetypes>', 'file type extensions to include in the count - default is .cr2')
   .action(options => {
     copyNames(options)
+  })
+
+program
+  .command('uniquify')
+  .description('make the values in one column of a csv file unique')
+  .option('-d|--dir <directory>', 'the directory for the file')
+  .option('-f|--file-name <file-name>', 'the name of the csv file to update, defaults to one file if only one file in the directory')
+  .option ('-c|--column <column>', 'the the column in the csv file, default is `barcode`')
+  .action(options => {
+    uniquify(options)
   })
 
 program.parse(process.argv)
