@@ -56,7 +56,7 @@ export default async function(sourcePath, destPath, moveFiles, recursive, target
         dirItems = null ; dirFiles = null ; dirFilePaths = null; //cleaning up just in cases
       }
       if(sourcePath != destPath) {
-        srcPathFiles = srcPathItems.map(item => path.join(sourcePath, item)).filter(isFile)
+        const srcPathFiles = srcPathItems.map(item => path.join(sourcePath, item)).filter(isFile)
         targetFilePaths = [...targetFilePaths, ...srcPathFiles]
       }
     }
