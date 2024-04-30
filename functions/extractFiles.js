@@ -115,30 +115,29 @@ export default async function(sourcePath, destPath, moveFiles, recursive, target
 
   if(filterFiles) {
     
+    let filterNames
     if(fs.lstatSync(filterFiles).isFile()) {
       if (path.extname(filterFiles).toLowerCase() == '.txt') {
-        let filesString = await fs.readFile(filterFiles, "utf8")
-        let filterFileNames = filesString.split(/[\r\n,;|]+/).filter(x => x && x.trim()).map(x => x.trim().toUpperCase())
-        targetFilePaths = targetFilePaths.filter(filePath => {
-          let fname = path.basename(filePath).replace(path.extname(filePath), "").toUpperCase()
-          return filterFileNames.some(x => {
-            return fname.startsWith(x)
-          })
-        })
+        const filesString = await fs.readFile(filterFiles, "utf8")
+        filterNames = filesString.split(/[\r\n,;|]+/).filter(x => x && x.trim()).map(x => x.trim().toUpperCase())
       } 
       //csv file
       else if (path.extname(filterFiles).toLowerCase() == '.csv') {
         const csvData = await readCSV(filterFiles)
-        const filterBarcodes = csvData.map(x => x['barcode'].toUpperCase()) //these are barcodes that are not in the database, with no bits on the end
-        targetFilePaths = targetFilePaths.filter(filePath => {
-          let fname = path.basename(filePath).replace(path.extname(filePath), "").toUpperCase()
-          return filterBarcodes.some(x => fname.startsWith(x))
-        })
+        filterNames = csvData.map(x => x['barcode'].toUpperCase())
       }
     }
+    else { //it might be a list
+      filterNames = filterFiles.replace(/\s+/g, ' ').trim().split(/[\s,|]/).filter(x => x)
+    }
+
+    targetFilePaths = targetFilePaths.filter(filePath => {
+      let fname = path.basename(filePath).replace(path.extname(filePath), "").toUpperCase()
+      return filterNames.some(x => fname.startsWith(x))
+    })
+
   }
 
-  //for testing, write out the barcodes that have been selected...
   try {
     const writeFileNames = targetFilePaths.map(x => path.basename(x))
     targetFilePaths.sort((a, b) => {

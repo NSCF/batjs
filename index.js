@@ -43,7 +43,7 @@ program
   .option('-i|--include-subdirs', 'include all subdirectories and their subdirectories in finding files to extract')
   .option('-e|--end-dir <end-dir>', 'filter files only with immediate parent directories with this name')
   .option('-a|--any-dir <any-dir>', 'filter files with this directory name anywhere in their file path')
-  .option('-f|--file-names <file-names>', 'a txt file with file names to filter on - only returns files listed in this file, excluding extensions')
+  .option('-f|--file-names <file-names>', 'a list of files to extract or a file containing such list')
   .option('-t|--file-types <file-types>', 'file type extensions to include in the extraction - default is .jpg, .jpeg')
   .option('-m|--move', 'move the files instead of copying them, default is copy')
   .action(options => {
