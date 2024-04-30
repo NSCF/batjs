@@ -22,7 +22,7 @@ import onlyUnique from '../utils/onlyUnique.js'
  * endDir is for filtering on the name of the immediate parent directory of files
  * anydir is for filtering on any parent directory of files
  */
-export default async function(sourcePath, destPath, moveFiles, recursive, targetFileTypes, endDir, anyDir, filterFiles) {
+export default async function(sourcePath, destPath, moveFiles, recursive, targetFileTypes, endDir, anyDir, filterFiles, writeList) {
 
   var sourcePath = path.resolve(process.cwd(), sourcePath)
 
@@ -36,6 +36,7 @@ export default async function(sourcePath, destPath, moveFiles, recursive, target
   //get the targetFiles
   let targetFilePaths = []
   
+  console.log('reading directory...')
   try{
     if(recursive) {
       targetFilePaths = await dir.promiseFiles(sourcePath)
@@ -67,10 +68,6 @@ export default async function(sourcePath, destPath, moveFiles, recursive, target
   }
   
   targetFilePaths = targetFilePaths.filter(item => path.extname(item)) //shouldn't be necessary but just in case...
-
-  //just to see what the max number of dups is...
-  const dups = targetFilePaths.map(x => path.basename(x).replace(path.extname(x), '').split('_')[1] || null)
-  const max = Math.max(...dups)
 
   if (targetFilePaths.length == 0) {
     console.log('no files match the criteria to transfer')
@@ -138,7 +135,12 @@ export default async function(sourcePath, destPath, moveFiles, recursive, target
 
   }
 
-  try {
+  if (targetFilePaths.length == 0) {
+    console.log('no files match those in the list provided')
+    return
+  }
+
+  if (writeList) {
     const writeFileNames = targetFilePaths.map(x => path.basename(x))
     targetFilePaths.sort((a, b) => {
       const firstFileName = path.basename(a)
@@ -155,18 +157,14 @@ export default async function(sourcePath, destPath, moveFiles, recursive, target
     })
     const uniqueWriteFileNames = writeFileNames.filter(onlyUnique)
     const writeFileRecords = uniqueWriteFileNames.map(x => ({filename: x}))
-    await writeCSV(writeFileRecords, path.resolve('./'), 'moveFileNames.csv')
+  
+    try {
+      await writeCSV(writeFileRecords, path.resolve('./'), 'moveFileNames.csv')
+    }
+    catch(err) {
+      console.error('error writing file:', err.message)
+    }
   }
-  catch(err) {
-    console.error('error writing file:', err.message)
-  }
-
-  if (targetFilePaths.length == 0) {
-    console.log('no files match', path.basename(filterFiles))
-    return
-  }
-
-  const uniqueFilePaths = targetFilePaths.filter(onlyUnique)
 
   //The actual transfer of files...
   const bar = new Bar()

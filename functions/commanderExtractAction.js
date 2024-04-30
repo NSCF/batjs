@@ -87,7 +87,7 @@ export default function(options){
   }).then(async proceed => {
     if (proceed) {
       try {
-        await extract(options.source, options.dest, options.move, options.includeSubdirs, options.fileTypes, options.endDir, options.anyDir, options.fileNames)
+        await extract(options.source, options.dest, options.move, options.includeSubdirs, options.fileTypes, options.endDir, options.anyDir, options.fileNames, options.write)
       }
       catch(err) {
         console.log('error extracting files: ', err.message)

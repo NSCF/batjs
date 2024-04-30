@@ -46,6 +46,7 @@ program
   .option('-f|--file-names <file-names>', 'a list of files to extract or a file containing such list')
   .option('-t|--file-types <file-types>', 'file type extensions to include in the extraction - default is .jpg, .jpeg')
   .option('-m|--move', 'move the files instead of copying them, default is copy')
+  .option('-w|--write', 'write out the list of files copied/moved as a CSV')
   .action(options => {
     extract(options)
 })
