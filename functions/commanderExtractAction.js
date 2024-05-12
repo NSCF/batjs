@@ -13,7 +13,7 @@ export default function(options){
   else {
     options.source = options.source.trim()
     if(!fs.existsSync(options.source)) {
-      console.log('Please add a source directory which exists')
+      console.log('Selected source directory does not exist')
       return 
     }
   }

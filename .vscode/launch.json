@@ -157,6 +157,18 @@
           "-t jpg"
       ],
       "console": "externalTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Test uniquifyfiles",
+      "program": "${workspaceFolder}\\index.js",
+      "args": [
+          "uniquifyfiles",
+          "-s C:\\Users\\Ian Engelbrecht\\Desktop\\temp\\test\\src",
+          "-d C:\\Users\\Ian Engelbrecht\\Desktop\\temp\\test\\dest",
+      ],
+      "console": "externalTerminal"
     }
   ]
 }

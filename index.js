@@ -9,6 +9,7 @@ import rename from './functions/commanderRenameAction.js'
 import unrename from './functions/commanderUnrenameAction.js'
 import copyNames from './functions/commanderCopyFileNameAction.js'
 import uniquify from './functions/commanderUniquifyCSVField.js'
+import uniquifyfiles from './functions/commanderUniquifyFilenames.js'
 
 
 program
@@ -96,6 +97,17 @@ program
   .option ('-c|--column <column>', 'the the column in the csv file, default is `barcode`')
   .action(options => {
     uniquify(options)
+  })
+
+program
+  .command('uniquifyfiles')
+  .description('make the file names in one folder unique relative to those in another folder, default is cwd')
+  .option('-s|--source <source>', 'the directory with the files to make unique')
+  .option('-d|--dest <target>', 'the directory to compare file names to')
+  .option('-t|--file-types <filetypes>', 'file type extensions to include in the count - default is .jpg')
+  .option('-c|--sepchar <sep>', 'the character used to indicate duplicate names, if they already exist, e.g. _ or -. Default is _')
+  .action(options => {
+    uniquifyfiles(options)
   })
 
 program.parse(process.argv)
