@@ -74,7 +74,12 @@ export default function(options){
   }
 
   if (options.fileNames){
-    promptMsg += `and listed in '${path.basename(options.fileNames)}' `
+    if (/[,|;]/.test(options.fileNames)) {
+      promptMsg += 'which are in the provided list '
+    }
+    else {
+      promptMsg += `and listed in '${path.basename(options.fileNames)}' `
+    }
   }
   
   promptMsg += `to  ${options.dest} `

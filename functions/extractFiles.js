@@ -113,7 +113,8 @@ export default async function(sourcePath, destPath, moveFiles, recursive, target
   if(filterFiles) {
     
     let filterNames
-    if(fs.lstatSync(filterFiles).isFile()) {
+    let exists = await fs.exists(filterFiles)
+    if(exists && fs.lstatSync(filterFiles).isFile()) {
       if (path.extname(filterFiles).toLowerCase() == '.txt') {
         const filesString = await fs.readFile(filterFiles, "utf8")
         filterNames = filesString.split(/[\r\n,;|]+/).filter(x => x && x.trim()).map(x => x.trim().toUpperCase())
